@@ -1,10 +1,14 @@
+"""
+Flask application for Emotion Detection.
+"""
 from flask import Flask, render_template, request
 from EmotionDetection.emotion_detection import emotion_detector
 
 app = Flask("Emotion Detector")
 
 @app.route("/emotionDetector")
-def RunSentimentAnalysis():
+def run_sentiment_analysis():
+    """Run emotion detection on text passed as a parameter."""
     text_to_analyze = request.args.get('textToAnalyze')
 
     response = emotion_detector(text_to_analyze)
@@ -27,6 +31,7 @@ def RunSentimentAnalysis():
 
 @app.route("/")
 def render_index_page():
+    """Render the main HTML page for the Emotion Detection interface."""
     return render_template('index.html')
 
 if __name__ == "__main__":
