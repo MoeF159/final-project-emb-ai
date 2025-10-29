@@ -10,7 +10,7 @@ def RunSentimentAnalysis():
     response = emotion_detector(text_to_analyze)
 
     if response is None or response.get('dominant_emotion') is None:
-        return "Invalid input! Please try again."
+        return "Invalid text! Please try again!"
 
     anger = response['anger']
     disgust = response['disgust']

@@ -1,16 +1,20 @@
-import requests
-import json
+import requests, json
 
 def emotion_detector(text_to_analyze):
     URL = 'https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict'
     Headers = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
     obj = { "raw_document": { "text": text_to_analyze } }
-    
     response = requests.post(URL, json=obj, headers = Headers)
 
-    #parse the json response from api
-    #format_response = json.loads(response.text)
-
+    # Default dictionary template
+    emotion_template = {
+        "anger": None,
+        "disgust": None,
+        "fear": None,
+        "joy": None,
+        "sadness": None,
+        "dominant_emotion": None
+    }
     if response.status_code == 200:
         # Convert JSON response text to a Python dictionary
         response_dict = json.loads(response.text)
@@ -26,7 +30,7 @@ def emotion_detector(text_to_analyze):
         # Find dominant emotion
         dominant_emotion = max(emotions, key=emotions.get)
 
-        # Return your formatted dictionary
+        # Return formatted dictionary
         return {
             "anger": anger_score,
             "disgust": disgust_score,
@@ -37,11 +41,12 @@ def emotion_detector(text_to_analyze):
         }
 
     elif response.status_code == 500:
-        # Handle server errors
+        # Handle server 500 errors
         return {"error": "Internal Server Error - the text may be invalid or too short."}
 
+    elif response.status_code == 400:
+        # Handle Bad Request 400 errors
+        return emotion_template
     else:
         # Handle any other status codes
         return {"error": f"Unexpected status code: {response.status_code}"}
-
-    #return format_response
